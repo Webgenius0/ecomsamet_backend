@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\Web\Backen\FavoriteController;
 use App\Http\Controllers\Web\Backend\BookingController;
@@ -99,3 +100,5 @@ Route::controller(BackendFavoriteController::class)->group(function () {
 
     Route::delete('/favorite/destroy/{id}', 'destroy')->name('favorite.destroy');
 });
+Route::get('user-profile', [UserController::class, 'index'])->name('user.index');
+Route::delete('user-profile/{id}', [UserController::class, 'destroy'])->name('user.destroy');

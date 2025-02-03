@@ -91,7 +91,7 @@
 
                     <ul class="slide-menu">
                         <li><a href="{{ route('profile.setting') }}" class="slide-item">Profile Settings</a></li>
-                        {{-- <li><a href="{{ route('faq.index') }}" class="slide-item">FAQ</a></li> --}}
+                        <li><a href="{{ route('user.index') }}" class="slide-item">User List</a></li>
                         {{-- <li><a href="{{ route('mail.setting') }}" class="slide-item">Mail Settings</a></li>
                         <li><a href="{{ route('stripe.index') }}" class="slide-item">Stripe Settings</a></li> --}}
 

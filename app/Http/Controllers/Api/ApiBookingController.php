@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class ApiBookingController extends Controller
                 ->with('apiuser', 'service')
                 ->get();
 
-            return response()->json($bookings, 200);
+            return ApiResponse::format(true, 'Bookings retrieved successfully', $bookings);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Failed to retrieve bookings.',
@@ -97,7 +98,7 @@ class ApiBookingController extends Controller
                 'error' => $e->getMessage(),
             ], 500);
         }
-        
+
     }
 
 
