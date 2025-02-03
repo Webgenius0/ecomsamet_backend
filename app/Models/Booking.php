@@ -17,6 +17,8 @@ class Booking extends Model
      'status',
    ];
 
+   //
+
    public function apiuser()
    {
     return $this->belongsTo(ApiUser::class, 'user_id', 'id');
