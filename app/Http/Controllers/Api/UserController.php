@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\ApiUser;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -14,13 +15,15 @@ class UserController extends Controller
 {
 
     public function index(){
-        // Get all users
-        $users = ApiUser::all();
-        return view('backend.layouts.users.index', compact('users'));
+       // here show token base user details from user table
+       $user = Auth::guard('api')->user();
+       return ApiResponse::format(true,201, 'User details retrieved successfully', $user);
+
     }
 
     public function update(Request $request, $id)
     {
+
         // Get the authenticated user
         $user = Auth::guard('api')->user();
 
@@ -30,11 +33,11 @@ class UserController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'fullname' => 'sometimes|string|max:255',
-            'phone' => 'sometimes|string|unique:api_users,phone,' . $id,
-            'email' => 'sometimes|email|unique:api_users,email,' . $id,
+            'name' => 'sometimes|string|max:255',
+            'phone' => 'sometimes|string|unique:users,phone,' . $id,
+            'email' => 'sometimes|email|unique:users,email,' . $id,
             'password' => 'sometimes|string|min:6',
-            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'avatar' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
         // If validation fails, return errors
@@ -47,14 +50,14 @@ class UserController extends Controller
 
         try {
             // Update fields only if provided
-            if ($request->has('fullname')) $user->fullname = $request->fullname;
+            if ($request->has('name')) $user->name = $request->name;
             if ($request->has('phone')) $user->phone = $request->phone;
             if ($request->has('email')) $user->email = $request->email;
             if ($request->has('password')) $user->password = Hash::make($request->password);
 
             // Handle Image Upload Properly
-            if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('profile_images', 'public');
+            if ($request->hasFile('avatar')) {
+                $imagePath = $request->file('avatar')->store('profile_images', 'public');
                 $user->image = $imagePath;
             }
             // Save updated user
@@ -68,7 +71,7 @@ class UserController extends Controller
 
     public function destroy($id){
         try {
-            $user = ApiUser::find($id);
+            $user = User::find($id);
             $user->delete();
             return redirect()->route('user.index');
         } catch (\Exception $e) {

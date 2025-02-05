@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\AdditionalService;
+use App\Models\Services;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -12,37 +14,49 @@ class ServiceSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('services')->insert([
-            [
-                'category_id' => 1, // Ensure this category exists in 'categories' table
-                'name' => 'Basic Cleaning',
-                'description' => 'A basic home cleaning service',
-                'price' => 50.00,
-                'image' => json_encode(['image1.jpg', 'image2.jpg']),
-                'duration' => '2 hours',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'category_id' => 2,
-                'name' => 'Premium Cleaning',
-                'description' => 'A deep cleaning service with special treatments',
-                'price' => 100.00,
-                'image' => json_encode(['premium1.jpg', 'premium2.jpg']),
-                'duration' => '4 hours',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'category_id' => 3,
-                'name' => 'Lawn Mowing',
-                'description' => 'Professional lawn mowing service',
-                'price' => 75.00,
-                'image' => json_encode(['lawn1.jpg']),
-                'duration' => '3 hours',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+
+            DB::beginTransaction();
+
+            try {
+                // Create a sample service
+                $service = Services::create([
+                    'user_id' => 1,
+                    'category_id' => 1,
+                    'service_name' => 'Premium Haircut',
+                    'service_details' => 'A professional haircut and styling service.',
+                    'price' => 25.00,
+                    'service_images' => json_encode(['haircut1.jpg', 'haircut2.jpg']),
+                    'duration' => '45 minutes',
+                    'location' => 'Dhaka, Bangladesh'
+                ]);
+
+                // Create additional services for the above service
+                $additionalServices = [
+                    [
+                        'service_id' => $service->id,
+                        'name' => 'Beard Trim',
+                        'price' => 8.00,
+                        'details' => 'Shaping and styling the beard.',
+                        'images' => json_encode(['beardtrim1.jpg'])
+                    ],
+                    [
+                        'service_id' => $service->id,
+                        'name' => 'Hair Wash',
+                        'price' => 5.00,
+                        'details' => 'Shampoo and conditioning.',
+                        'images' => json_encode(['hairwash1.jpg'])
+                    ]
+                ];
+
+                foreach ($additionalServices as $serviceData) {
+                    AdditionalService::create($serviceData);
+                }
+
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollBack();
+                echo "Error seeding data: " . $e->getMessage();
+            }
+
     }
 }
