@@ -19,4 +19,11 @@ class Rating extends Model
    public function service(){
      return $this->belongsTo(Services::class);
    }
+
+   protected $hidden = [
+    'password',
+    'remember_token',
+    'created_at',
+    'updated_at',
+];
 }

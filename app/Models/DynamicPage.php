@@ -15,4 +15,12 @@ class DynamicPage extends Model {
         'page_content',
         'status',
     ];
+
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
+    ];
 }

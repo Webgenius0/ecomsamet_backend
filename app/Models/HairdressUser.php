@@ -16,4 +16,11 @@ class HairdressUser extends Model
         'about_you',
         'image',
     ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
+    ];
 }

@@ -16,11 +16,18 @@ class AdditionalService extends Model
         'images',
     ];
 
-    protected $casts = [
-        'images' => 'array',
-    ];
+    // protected $casts = [
+    //     'images' => 'array',
+    // ];
 
     public function service(){
         return $this->belongsTo(Services::class, 'service_id');
     }
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
+    ];
 }

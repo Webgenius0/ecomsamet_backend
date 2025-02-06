@@ -41,4 +41,15 @@ class Services extends Model
 {
     return $this->belongsToMany(ApiUser::class, 'favorites', 'service_id', 'user_id')->withTimestamps();
 }
+public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
+    ];
 }

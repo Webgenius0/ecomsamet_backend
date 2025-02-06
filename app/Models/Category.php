@@ -14,4 +14,11 @@ class Category extends Model
     {
         return $this->hasMany(Services::class, 'category_id');
     }
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
+    ];
 }

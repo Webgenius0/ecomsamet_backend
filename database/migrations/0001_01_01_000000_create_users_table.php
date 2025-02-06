@@ -17,6 +17,11 @@ return new class extends Migration {
             $table->string('phone', 150)->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->text('about_you')->nullable();
+            $table->string('bussiness_name')->nullable();
+            $table->string('bussiness_address')->nullable();
+            $table->string('professional_title')->nullable();
+            $table->string('professional_certificate')->nullable();
             $table->string('provider_id')->nullable();
             $table->string('mobile_verfi_otp')->nullable();
             $table->boolean('terms_and_policy')->default(false);

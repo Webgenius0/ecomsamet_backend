@@ -43,32 +43,30 @@ public function store(Request $request)
             return ApiResponse::format(false, 401, 'Unauthorized: Please log in');
         }
 
-        dd($request->all()); 
-
         // Validation for the incoming request data
         $validator = Validator::make($request->all(), [
-            'category_id' => 'required|integer',
-            'service_name' => 'required|string|max:255',
-            'service_details' => 'required|string',
-            'price' => 'required|numeric',
-            'service_images' => 'nullable|array',
-            'service_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'duration' => 'required|string|max:255',
-            'location' => 'required|string|max:255',
-            'additional_services' => 'nullable|array',
-            'additional_services.*.name' => 'nullable|string|max:255',
-            'additional_services.*.price' => 'nullable|numeric',
-            'additional_services.*.details' => 'nullable|string',
-            'additional_services.*.images' => 'nullable|array',
-            'additional_services.*.images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'category_id' => 'required|integer',
+        'service_name' => 'required|string|max:255',
+        'service_details' => 'required|string',
+        'price' => 'required|numeric',
+        'service_images' => 'nullable|array',
+        'service_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'duration' => 'required|string|max:255',
+        'location' => 'required|string|max:255',
+        'additional_services' => 'nullable|array',
+        'additional_services.*.name' => 'required|string|max:255',
+        'additional_services.*.price' => 'required|numeric',
+        'additional_services.*.details' => 'nullable|string',
+        'additional_services.*.image' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-
+        // dd($request->all());
 
         // If validation fails, return the errors
         if ($validator->fails()) {
             return ApiResponse::format(false, 400, 'Validation failed', $validator->errors());
         }
+        // dd($request->all());
 
         // Handle service images
         $serviceImagePaths = [];
@@ -78,7 +76,7 @@ public function store(Request $request)
                 $serviceImagePaths[] = str_replace('public/', 'storage/', $path);
             }
         }
-
+// dd($serviceImagePaths);
         // Create a service
         $service = Services::create([
             'user_id' => $user->id,
@@ -91,31 +89,29 @@ public function store(Request $request)
             'location' => $request->location
         ]);
 
+        // dd($service);
+
         // Create additional services
         $additionalServices = [];
         if ($request->has('additional_services')) {
             foreach ($request->additional_services as $key => $item) {
-                // Handle additional service images
-                $additionalImagePaths = [];
-                if (isset($item['images']) && is_array($item['images'])) {
-                    foreach ($item['images'] as $image) {
-                        $path = $image->store('public/additional_services');
-                        $additionalImagePaths[] = str_replace('public/', 'storage/', $path);
-                    }
+                // Handle single additional service image
+                $additionalImagePath = null;
+                if (isset($item['image']) && $request->hasFile("additional_services.$key.image")) {
+                    $path = $request->file("additional_services.$key.image")->store('public/additional_services');
+                    $additionalImagePath = str_replace('public/', 'storage/', $path);
                 }
-
-                // dd($additionalImagePaths);
-
                 // Create the additional service
                 $additionalServices[] = AdditionalService::create([
                     'service_id' => $service->id,
                     'name' => $item['name'],
                     'price' => $item['price'],
                     'details' => $item['details'],
-                    'images' =>$additionalImagePaths,
+                    'images' => $additionalImagePath, // Store single image
                 ]);
             }
         }
+
 
         DB::commit();
 

@@ -12,16 +12,16 @@ class Booking extends Model
    protected $fillable = [
      'user_id',
      'service_id',
-     'date',
-     'time',
-     'status',
+     'booking_date',
+     'booking_time',
+     'total_price',
    ];
 
    //
 
-   public function apiuser()
+   public function user()
    {
-    return $this->belongsTo(ApiUser::class, 'user_id', 'id');
+    return $this->belongsTo(User::class, 'user_id');
 
    }
 
@@ -29,4 +29,14 @@ class Booking extends Model
    {
      return $this->belongsTo(Services::class);
    }
+   public function additionalServices()
+{
+    return $this->hasMany(BookingAdditionalService::class, 'booking_id');
+}
+protected $hidden = [
+    'password',
+    'remember_token',
+    'created_at',
+    'updated_at',
+];
 }
