@@ -15,19 +15,20 @@ class HairDressServicesController extends Controller
 {
     public function index()
 {
-    // Get the authenticated user
     $user = Auth::user();
 
-    // Check if the user is authenticated
     if (!$user) {
         return ApiResponse::format(false, 401, 'Unauthorized: Please log in');
     }
 
-    $services = Services::with(['user','category','additionalServices'])
+
+    $services = Services::with(['ratings.user' => function ($query) {
+        $query->select('id', 'name', 'avatar'); 
+    }])
         ->where('user_id', $user->id)
         ->get();
 
-
+// dd($services);
     return ApiResponse::format(true, 200, 'Services retrieved successfully', $services);
 }
 
@@ -77,7 +78,6 @@ public function store(Request $request)
             }
         }
 // dd($serviceImagePaths);
-        // Create a service
         $service = Services::create([
             'user_id' => $user->id,
             'category_id' => $request->category_id,

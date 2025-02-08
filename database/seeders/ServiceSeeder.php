@@ -20,7 +20,7 @@ class ServiceSeeder extends Seeder
             try {
                 // Create a sample service
                 $service = Services::create([
-                    'user_id' => 1,
+                    'user_id' => 3,
                     'category_id' => 1,
                     'service_name' => 'Premium Haircut',
                     'service_details' => 'A professional haircut and styling service.',
@@ -47,6 +47,8 @@ class ServiceSeeder extends Seeder
                         'images' => json_encode(['hairwash1.jpg'])
                     ]
                 ];
+
+
 
                 foreach ($additionalServices as $serviceData) {
                     AdditionalService::create($serviceData);

@@ -30,7 +30,10 @@ class User extends Authenticatable implements JWTSubject
             'terms_and_policy'  => 'boolean',
         ];
     }
-
+    public function favoritedServices()
+    {
+        return $this->hasMany(Favorite::class, 'user_id');
+    }
     /**
      * Get the identifier that will be stored in the JWT token.
      */

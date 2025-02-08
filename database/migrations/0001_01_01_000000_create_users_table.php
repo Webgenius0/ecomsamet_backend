@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->string('bussiness_address')->nullable();
             $table->string('professional_title')->nullable();
             $table->string('professional_certificate')->nullable();
-            $table->string('provider_id')->nullable();
+            $table->string('otp')->nullable();
             $table->string('mobile_verfi_otp')->nullable();
             $table->boolean('terms_and_policy')->default(false);
             $table->string('avatar')->nullable();

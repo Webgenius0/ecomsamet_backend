@@ -39,8 +39,13 @@ class Services extends Model
 
     public function favoritedBy()
 {
-    return $this->belongsToMany(ApiUser::class, 'favorites', 'service_id', 'user_id')->withTimestamps();
+    return $this->belongsToMany(user::class, 'favorites', 'service_id', 'user_id')->withTimestamps();
 }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'service_id');
+    }
 public function bookings()
     {
         return $this->hasMany(Booking::class);

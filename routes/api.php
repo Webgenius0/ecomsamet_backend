@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::post('/register', [RegisterController::class, 'register']);
-Route::post('/verify', [RegisterController::class, 'verify']);
+Route::post('/verify', [RegisterController::class, 'verifyOtp']);
 Route::post('/login', [Logincontroller::class, 'login']);
 Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:api');
 
@@ -39,17 +39,6 @@ Route::get('/categories', [ApiCategorieController::class, 'index']);
 Route::post('/categories', [ApiCategorieController::class, 'store']);
 Route::get('/categories/{id}', [ApiCategorieController::class, 'getServicesByCategory']);
 
-
-Route::get('/rating', [ApiRatingController::class, 'index']);
-Route::post('/rating', [ApiRatingController::class, 'store']);
-
-
-// routes/api.php
-Route::middleware('auth:api')->group(function () {
-    Route::get('favorites', [ApiFavoriteServiceController::class, 'index']);
-    Route::post('favorites/{service}', [ApiFavoriteServiceController::class, 'toggle']);
-    Route::get('favorites/{service}/check', [ApiFavoriteServiceController::class, 'show']);
-});
 
 // user info routes with role and permissions base
 Route::middleware(['auth:api'])->group(function () {
@@ -104,6 +93,18 @@ Route::middleware(['auth:api', 'role:user'])->group(function () {
     Route::get('/bookings/confirm', [UserBookingController::class, 'getconfirmBookings']);
     Route::get('/bookings/completed', [UserBookingController::class, 'getcompeletedBookings']);
     Route::get('/bookings/cancelled', [UserBookingController::class, 'getconcelledBookings']);
+});
+
+
+//For User Rating
+Route::middleware(['auth:api', 'role:user'])->group(function () {
+    Route::post('/rating', [ApiRatingController::class, 'rateService']);
+    Route::get('/getall-rating', [ApiRatingController::class, 'index']);
+});
+//For User Favorite
+Route::middleware(['auth:api', 'role:user'])->group(function () {
+    Route::post('/favorites/{id}', [ApiFavoriteServiceController::class, 'toggle']);
+    Route::get('/favorites/{service}/check', [ApiFavoriteServiceController::class, 'check']);
 });
 
 //For user Notification Controller
