@@ -12,6 +12,7 @@ use App\Http\Controllers\APi\ApiRatingController;
 use App\Http\Controllers\Api\ApiServiceController;
 use App\Http\Controllers\Api\ApiFavoriteServiceController;
 use App\Http\Controllers\Api\HairDressBookingController;
+use App\Http\Controllers\Api\HairDresserNotificationController;
 use App\Http\Controllers\Api\HairDressServicesController;
 use App\Http\Controllers\Api\HairHomeController;
 use App\Http\Controllers\Api\UserBookingController;
@@ -67,14 +68,16 @@ Route::middleware(['auth:api', 'role:hairdresser'])->group(function () {
 //For Hairdresser Booking Controller
 Route::middleware(['auth:api', 'role:hairdresser'])->group(function () {
     Route::get('/booking/pendding', [HairDressBookingController::class, 'penddingdata']);
-    Route::post('/booking/acceptbooking/{id}/{action}', [HairDressBookingController::class, 'acceptbooking']);
+    Route::post('/booking/pendding/{id}/{action}', [HairDressBookingController::class, 'acceptbooking']);
     Route::get('/booking/booked', [HairDressBookingController::class, 'booked']);
-    Route::post('/booking/comepleted/{id}/{action}', [HairDressBookingController::class, 'completed']);
+    Route::get('/booking/comepleted', [HairDressBookingController::class, 'completed']);
 
 });
 
 //For Hairdresser Notification Controller
-
+Route::middleware(['auth:api', 'role:hairdresser'])->group(function () {
+    Route::get('/notification', [HairDresserNotificationController::class, 'notification']);
+});
 
 //For User Controller
 

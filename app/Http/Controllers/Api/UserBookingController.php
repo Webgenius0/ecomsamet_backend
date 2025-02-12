@@ -8,12 +8,18 @@ use App\Models\AdditionalService;
 use App\Models\Booking;
 use App\Models\BookingAdditionalService;
 use App\Models\Services;
+use App\Models\User;
+use App\Notifications\BookingNotification;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+
+use function Illuminate\Log\log;
 
 class UserBookingController extends Controller
 {
@@ -44,9 +50,9 @@ class UserBookingController extends Controller
 
 public function bookService(Request $request)
 {
-    DB::beginTransaction();
 
     try {
+        DB::beginTransaction();
         $user = Auth::user();
 
         if (!$user) {
@@ -106,6 +112,14 @@ public function bookService(Request $request)
             'booking_tax' => $taxAmount
         ]);
 
+        //Notification to the hairdresser
+        $hairdresser = User::findOrFail($service->user_id);
+        // dd($hairdresser);
+        if ($hairdresser) {
+            $hairdresser->notify(new BookingNotification());
+        }
+
+
         DB::commit();
 
         return response()->json([
@@ -114,7 +128,7 @@ public function bookService(Request $request)
             'booking' => $booking
         ]);
 
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         DB::rollBack();
         return response()->json([
             'success' => false,

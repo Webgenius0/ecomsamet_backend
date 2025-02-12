@@ -25,6 +25,7 @@ class HairDressBookingController extends Controller
 
     public function acceptbooking($id, $action)
     {
+        // dd($action);
 
         $booking = Booking::find($id);
 
@@ -46,7 +47,14 @@ class HairDressBookingController extends Controller
             $booking->status = 'cancelled';
             $booking->save();
             return response()->json(['message' => 'Booking canceled successfully']);
-        } else {
+        }
+        elseif ($action === 'complete') {
+            $booking->status ='completed';
+            $booking->save();
+            return response()->json(['message' => 'Booking compeleted successfully']);
+        }
+
+        else {
             return response()->json(['message' => 'Invalid action'], 400);
         }
     }
@@ -67,8 +75,18 @@ class HairDressBookingController extends Controller
     }
 
 
-    public function completed($id, $action){
-        
+    public function completed(){
+        $user = Auth::user();
+
+        $bookings = Booking::with(['service', 'service.user'])
+            ->whereHas('service', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->where('status', 'completed')
+            ->get();
+
+        return $bookings;
+
     }
 
 }

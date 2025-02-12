@@ -22,6 +22,7 @@
                                 <th>User Name</th>
                                 <th>Email Address</th>
                                 <th>Phone Number</th>
+                                <th>Role</th>
                                 <th>Profile Image</th>
                                 <th>Action</th>
                             </tr>
@@ -29,9 +30,10 @@
                         <tbody>
                             @foreach($users as $user)
                             <tr>
-                                <td>{{ $user->fullname ?? 'N/A' }}</td>
+                                <td>{{ $user->name ?? 'N/A' }}</td>
                                 <td>{{ $user->email ?? 'N/A' }}</td>
                                 <td>{{ $user->phone ?? 'N/A' }}</td>
+                                <td>{{ $user->role ?? 'N/A' }}</td>
                                 <td>
                                     @if(is_array($user->image))
                                         <img src="{{ asset('storage/' . $user->image[0]) }}" alt="User Image" width="100">
