@@ -18,6 +18,8 @@ class Services extends Model
         'service_images',
         'duration',
         'location',
+        'latitude',
+        'longitude',
     ];
 
     protected $casts = [

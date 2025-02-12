@@ -23,7 +23,7 @@ class HairDressServicesController extends Controller
 
 
     $services = Services::with(['ratings.user' => function ($query) {
-        $query->select('id', 'name', 'avatar'); 
+        $query->select('id', 'name', 'avatar');
     }])
         ->where('user_id', $user->id)
         ->get();
@@ -54,6 +54,8 @@ public function store(Request $request)
         'service_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'duration' => 'required|string|max:255',
         'location' => 'required|string|max:255',
+        'latitude' => 'nullable|numeric',
+        'longitude' => 'nullable|numeric',
         'additional_services' => 'nullable|array',
         'additional_services.*.name' => 'required|string|max:255',
         'additional_services.*.price' => 'required|numeric',
@@ -86,7 +88,9 @@ public function store(Request $request)
             'price' => $request->price,
             'service_images' => $serviceImagePaths,
             'duration' => $request->duration,
-            'location' => $request->location
+            'location' => $request->location,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude
         ]);
 
         // dd($service);

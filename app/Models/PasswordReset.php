@@ -9,7 +9,7 @@ class PasswordReset extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['email', 'otp'];
+    protected $fillable = ['phone', 'otp'];
 
     public $timestamps = true;
 }
