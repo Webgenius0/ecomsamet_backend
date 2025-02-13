@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\ApiBookingController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\ForgetPasswordController;
-use App\Http\Controllers\Api\Auth\Logincontroller;
+use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Route;
 // });
 Route::post('/register', [RegisterController::class, 'register']);
 Route::post('/verify', [RegisterController::class, 'verifyOtp']);
-Route::post('/login', [Logincontroller::class, 'login']);
+Route::post('/login', [LoginController::class, 'login']);
 Route::post('/reset', [ForgetPasswordController::class, 'requestReset']);
 Route::post('/reset-password', [ForgetPasswordController::class, 'resetPassword']);
 Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:api');

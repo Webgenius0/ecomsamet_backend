@@ -52,7 +52,7 @@ public function store(Request $request)
         'price' => 'required|numeric',
         'service_images' => 'nullable|array',
         'service_images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'duration' => 'required|string|max:255',
+        'duration' => 'nullable|string|max:255',
         'location' => 'required|string|max:255',
         'latitude' => 'nullable|numeric',
         'longitude' => 'nullable|numeric',
