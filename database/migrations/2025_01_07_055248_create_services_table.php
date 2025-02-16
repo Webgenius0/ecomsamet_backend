@@ -17,7 +17,7 @@ return new class extends Migration
                 $table->foreignId('category_id')->constrained()->onDelete('cascade');
                 $table->string('service_name');
                 $table->text('service_details')->nullable();
-                $table->decimal('price', 10, 2);
+                $table->float('price', 10, 2);
                 $table->json('service_images')->nullable(); // For multiple images
                 $table->string('duration')->nullable();
                 $table->string('location')->nullable();

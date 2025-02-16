@@ -23,6 +23,7 @@ class RegisterController extends Controller
     // Step 1: Register User and Send OTP
     public function register(Request $request)
 {
+    // dd($request);
     try {
         // Validate the request
         $request->validate([
@@ -51,7 +52,6 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
             'avatar' => $imageData,
         ]);
-
         // Set static OTP (e.g., '1234')
         $otp = '1234';
 
