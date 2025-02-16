@@ -4,18 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
-class DynamicPage extends Model {
-    use HasFactory, SoftDeletes;
-
+class HairdressUser extends Model
+{
+    use HasFactory;
     protected $fillable = [
-        'page_title',
-        'page_slug',
-        'page_content',
-        'status',
+        'name',
+        'email',
+        'phone',
+        'address',
+        'about_you',
+        'image',
     ];
-
 
     protected $hidden = [
         'password',

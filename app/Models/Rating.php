@@ -13,10 +13,19 @@ class Rating extends Model
 
    public function user()
    {
-      return $this->belongsTo(ApiUser::class);
+      return $this->belongsTo(user::class);
    }
 
    public function service(){
-     return $this->belongsTo(Services::class);
+     return $this->belongsTo(Services::class,'service_id');
    }
+
+   
+
+   protected $hidden = [
+    'password',
+    'remember_token',
+    'created_at',
+    'updated_at',
+];
 }

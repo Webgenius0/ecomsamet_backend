@@ -51,18 +51,23 @@
                             {{-- dropdown menu --}}
                             <div class="dropdown d-md-flex profile-1">
                                 <a href="#" data-bs-toggle="dropdown"
-                                    class="nav-link pe-2 leading-none d-flex animate">
-                                    <span>
-                                        <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('backend/images/faces/6.jpg') }}"
-                                            alt="profile-user"
-                                            class="profile-img-change avatar profile-user brround cover-image">
-                                    </span>
+        class="nav-link pe-2 leading-none d-flex animate">
+        <span>
+            @if(Auth::check())
+                <img src="{{ Auth::user()->avatar ? asset(Auth::user()->avatar) : asset('backend/images/faces/6.jpg') }}"
+                    alt="profile-user"
+                    class="profile-img-change avatar profile-user brround cover-image">
+            @else
+                <img src="{{ asset('backend/images/brand/logo-3.png') }}" alt="profile-user"
+                    class="profile-img-change avatar profile-user brround cover-image">
+            @endif
+        </span>
 
-                                    <div class="text-center p-1 d-flex d-lg-none-max">
-                                        <h6 class="mb-0" id="profile-heading">{{ Auth::user()->name ?? 'N/A' }}<i
-                                                class="user-angle ms-1 fa fa-angle-down "></i></h6>
-                                    </div>
-                                </a>
+        <div class="text-center p-1 d-flex d-lg-none-max">
+            <h6 class="mb-0" id="profile-heading">{{ Auth::user() ? Auth::user()->name : 'N/A' }}<i
+                    class="user-angle ms-1 fa fa-angle-down "></i></h6>
+        </div>
+    </a>
 
                                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
                                     <a class="dropdown-item" href="{{ route('profile.setting') }}">

@@ -2,21 +2,34 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Services;
 use App\Helpers\ApiResponse;
+use App\Http\Controllers\Controller;
 use App\Models\Category;
-use Illuminate\Http\JsonResponse;
+use App\Models\Rating;
+use App\Models\Services;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
-class ApiServiceController extends Controller
+class UserHomeController extends Controller
 {
-    // Method to get all services
     public function index()
     {
+        try {
+        $user = Auth::user();
+
+        if(!$user) {
+            return ApiResponse::format(false, 401, 'Unauthorized: Please log in');
+        };
+
+
+
         $services = Services::all();
 
         return ApiResponse::format(true, 200, 'User registered successfully', $services);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Services not found.'], 500);
+        }
     }
 
     public function search(Request $request)
@@ -70,6 +83,29 @@ public function show($id)
     }
 }
 
+public function topRating(){
+    $user = Auth::user();
 
+    if(!$user) {
+        return ApiResponse::format(false, 401, 'Unauthorized: Please log in');
+    };
+
+    try {
+        $ratings = Rating::orderBy('rating', 'desc')
+                         ->take(5)
+                         ->get(['id', 'user_id', 'service_id', 'rating', 'comment', 'created_at', 'updated_at']);
+
+        return ApiResponse::format(true, 200, 'Top ratings', $ratings);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error fetching top ratings',
+            'error' => $e->getMessage()
+        ], 500);
+    }
 
 }
+}
+
+
+

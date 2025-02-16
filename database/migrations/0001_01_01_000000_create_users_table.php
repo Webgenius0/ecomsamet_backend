@@ -14,18 +14,22 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 150);
             $table->string('email', 150)->unique();
+            $table->string('phone', 150)->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-
+            $table->text('about_you')->nullable();
+            $table->string('bussiness_name')->nullable();
+            $table->string('bussiness_address')->nullable();
+            $table->string('professional_title')->nullable();
+            $table->string('professional_certificate')->nullable();
+            $table->string('otp')->nullable();
+            $table->string('mobile_verfi_otp')->nullable();
             $table->boolean('terms_and_policy')->default(false);
-
             $table->string('avatar')->nullable();
             $table->string('google_id')->nullable()->unique();
             $table->string('apple_id')->nullable()->unique();
-
-            $table->enum('role', ['admin', 'user'])->default('user')->nullable(false);
+            $table->enum('role', ['admin', 'user', 'hairdresser'])->default('user')->nullable(false);
             $table->enum('status', ['active', 'inactive'])->default('active');
-
             $table->rememberToken();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

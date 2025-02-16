@@ -10,26 +10,60 @@ class Services extends Model
 
     use HasFactory;
     protected $fillable = [
-        'id',
+        'user_id',
         'category_id',
-        'name',
-        'description',
+        'service_name',
+        'service_details',
         'price',
-        'image',
+        'service_images',
         'duration',
+        'location',
+        'latitude',
+        'longitude',
     ];
 
-
+    protected $casts = [
+        'service_images' => 'array',
+    ];
+    public function user()
+    {
+        return $this->belongsTo(User::class,'user_id');
+    }
     public function category()
     {
-        return $this->belongsTo(Categorie::class);
+        return $this->belongsTo(Category::class,'category_id');
     }
-    protected $casts = [
-       'image' => 'array',
-    ];
+
+    public function additionalServices()
+    {
+        return $this->hasMany(AdditionalService::class, 'service_id');
+    }
 
     public function favoritedBy()
 {
-    return $this->belongsToMany(ApiUser::class, 'favorites', 'service_id', 'user_id')->withTimestamps();
+    return $this->belongsToMany(user::class, 'favorites', 'service_id', 'user_id')->withTimestamps();
 }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'service_id');
+    }
+public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'created_at',
+        'updated_at',
+    ];
+
+    protected function casts(): array
+   {
+       return [
+           'price' => 'float',
+       ];
+   }
 }

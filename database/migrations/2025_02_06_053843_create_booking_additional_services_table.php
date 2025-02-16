@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('password_resets', function (Blueprint $table) {
+        Schema::create('booking_additional_services', function (Blueprint $table) {
             $table->id();
-            $table->string('phone');
-            $table->string('otp');
+            $table->foreignId('booking_id')->constrained()->onDelete('cascade');
+    $table->foreignId('additional_service_id')->constrained()->onDelete('cascade');
+    $table->decimal('price', 10, 2);
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('password_resets');
+        Schema::dropIfExists('booking_additional_services');
     }
 };

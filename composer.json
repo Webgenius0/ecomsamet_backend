@@ -16,6 +16,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
+        "php-open-source-saver/jwt-auth": "^2.3",
         "thiagoalessio/tesseract_ocr": "^2.13",
         "twilio/sdk": "^8.3",
         "tymon/jwt-auth": "^2.1",

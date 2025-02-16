@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('service_id');
             $table->integer('rating');
             $table->longText('comment')->nullable();
-            $table->foreign('user_id')->references('id')->on('api_users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
             $table->timestamps();
         });
