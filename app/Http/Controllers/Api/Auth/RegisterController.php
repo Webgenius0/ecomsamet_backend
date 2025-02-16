@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use App\Helpers\ApiResponse;
-use App\Models\User;
 
 class RegisterController extends Controller
 {
@@ -22,106 +21,112 @@ class RegisterController extends Controller
 
     // Step 1: Register User and Send OTP
     public function register(Request $request)
-{
-    try {
-        // Validate the request
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|unique:users,phone,NULL,id,role,' . request()->role,
-            'email' => 'required|email|unique:users,email,NULL,id,role,' . request()->role,
-            'password' => 'required|string|min:8|confirmed',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'role' => 'required|in:user,hairdresser',
-        ]);
+    {
+        try {
+            // Validate the request
+            $request->validate([
+                'fullname' => 'required|string|max:255',
+                'phone' => 'required|string|unique:api_users,phone',
+                'email' => 'required|email|unique:api_users,email',
+                'password' => 'required|string|min:8|confirmed',
+                'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+            // Upload image if provided
+            $imagePaths = [];
 
-        // Handle avatar upload if provided
-        if ($request->hasFile('avatar')) {
-            $imagePath = $request->file('avatar')->store('profile_images', 'public');
-            $imageData = $imagePath; // Store the image path
-        } else {
-            $imageData = null; // No image uploaded, set to null
+            // Handle each uploaded image
+            if ($request->hasFile('image')) {
+                foreach ($request->file('image') as $image) {
+                    $path = $image->store('profile_images', 'public');
+                    $imagePaths[] = $path;
+                }
+            }
+
+            // Create user record
+            $user = ApiUser::create([
+                'fullname' => $request->fullname,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'image' => json_encode($imagePaths),
+            ]);
+
+            return ApiResponse::format(true, 'User registered successfully', $user);
+
+
+
+            // Send OTP
+            $sent = $this->twilioService->sendOtp($request->phone);
+            if (!$sent) {
+                Log::error("Failed to send OTP to phone: {$request->phone}");
+                return response()->json(['message' => 'Failed to send OTP'], 500);
+            }
+            Log::info("OTP sent to phone: {$request->phone}");
+
+
+            return response()->json([
+                'message' => 'OTP sent successfully. Please verify your phone number.',
+                'user_id' => $user->id
+            ], 201);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $firstError = collect($e->errors())->flatten()->first();
+            Log::error('Validation error during registration: ' . $firstError);
+            return response()->json([
+                // 'message' => 'Validation failed',
+                'message' => $firstError
+            ], 422);
+
+        } catch (\Exception $e) {
+            Log::error('Unexpected error during registration: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'An error occurred during registration',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Create user record
-        $user = User::create([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'role' => $request->role,
-            'password' => Hash::make($request->password),
-            'avatar' => $imageData,
-        ]);
-
-        // Set static OTP (e.g., '1234')
-        $otp = '1234';
-
-// Assign the static OTP to the 'otp' field (since the column in the table is 'otp')
-$user->otp = $otp;
-$user->save();
-
-Log::info("Static OTP {$otp} assigned to user with phone: {$request->phone}");
-
-// Return the response indicating OTP was set (simulated)
-return ApiResponse::format(true, 201, 'User registered successfully.', ['otp' => $user->otp]);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        $firstError = collect($e->errors())->flatten()->first();
-        Log::error('Validation error during registration: ' . $firstError);
-        return response()->json(['message' => $firstError], 422);
-
-    } catch (\Exception $e) {
-        Log::error('Unexpected error during registration: ' . $e->getMessage());
-        return response()->json(['message' => 'An error occurred during registration', 'error' => $e->getMessage()], 500);
     }
-}
-
 
     // Step 2: Verify OTP
     public function verifyOtp(Request $request)
-{
-    try {
-        // Validate the request
-        $request->validate([
-            'phone' => 'required|string',
-            'otp' => 'required|string',
-        ]);
+    {
+        try {
+            // Validate the request
+            $request->validate([
+                'phone' => 'required|string',
+                'otp' => 'required|string',
+            ]);
 
-        // Retrieve the user by phone number
-        $user = User::where('phone', $request->phone)->first();
+            // Verify OTP
+            $isValid = $this->twilioService->verifyOtp($request->phone, $request->otp);
 
-        if (!$user) {
-            Log::warning("User not found for phone: {$request->phone}");
+            if (!$isValid) {
+                Log::warning("Invalid OTP for phone: {$request->phone}");
+                return response()->json(['message' => 'Invalid OTP'], 400);
+            }
+
+            // Mark user as verified
+            $user = ApiUser::where('phone', $request->phone)->first();
+            if ($user) {
+                $user->update(['mobile_verfi_otp' => 'verified']);
+                return response()->json(['message' => 'Phone number verified successfully'], 200);
+            }
+
             return response()->json(['message' => 'User not found'], 404);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $firstError = collect($e->errors())->flatten()->first();
+            Log::error('Validation error during OTP verification: ' . $firstError);
+            return response()->json([
+                'message' => 'Validation failed',
+                'error' => $firstError
+            ], 422);
+
+        } catch (\Exception $e) {
+            Log::error('Unexpected error during OTP verification: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'An error occurred during OTP verification',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Verify OTP (use the stored OTP in the database)
-        if ($user->otp !== $request->otp) {
-            Log::warning("Invalid OTP for phone: {$request->phone}");
-            return response()->json(['message' => 'Invalid OTP'], 400);
-        }
-
-        // Mark user as verified
-        $user->update(['mobile_verfi_otp' => 'verified']);
-
-        Log::info("Phone number verified successfully for phone: {$request->phone}");
-
-        return response()->json(['message' => 'Phone number verified successfully'], 200);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        $firstError = collect($e->errors())->flatten()->first();
-        Log::error('Validation error during OTP verification: ' . $firstError);
-        return response()->json([
-            'message' => 'Validation failed',
-            'error' => $firstError
-        ], 422);
-
-    } catch (\Exception $e) {
-        Log::error('Unexpected error during OTP verification: ' . $e->getMessage());
-        return response()->json([
-            'message' => 'An error occurred during OTP verification',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
-
 }

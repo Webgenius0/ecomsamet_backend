@@ -41,4 +41,3 @@ Route::get('/test-email', function () {
 });
 
 require __DIR__ . '/auth.php';
-require __DIR__ . '/backend.php';

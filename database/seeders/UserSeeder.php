@@ -45,23 +45,6 @@ class UserSeeder extends Seeder
                 'updated_at'        => '2024-09-05 10:07:37',
                 'deleted_at'        => null,
             ],
-            [
-                'id'                => 3,
-                'name'              => 'hairdresser',
-                'email'             => 'hairdress@hairdress.com',
-                'email_verified_at' => null,
-                'password'          => Hash::make('12345678'),
-                'terms_and_policy'  => 1,
-                'avatar'            => null,
-                'google_id'         => null,
-                'apple_id'          => null,
-                'role'              => 'hairdresser',
-                'status'            => 'active',
-                'remember_token'    => null,
-                'created_at'        => '2024-09-05 04:07:08',
-                'updated_at'        => '2024-09-05 10:07:37',
-                'deleted_at'        => null,
-            ],
         ]);
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Models\ApiUser;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Log;
@@ -25,14 +25,14 @@ class LoginController extends Controller
             Log::info('Login attempt with credentials:', $credentials);
 
             // Find the user by email
-            $user = User::where('email', $request->email)->first();
+            $user = ApiUser::where('email', $request->email)->first();
 
             // Check if user exists and password is correct
             if (!$user || !Hash::check($request->password, $user->password)) {
                 Log::error('Invalid credentials for email: ' . $request->email);
                 return response()->json(['message' => 'Invalid credentials'], 401);
             }
-// dd($user);
+
             // Generate JWT token
             $token = JWTAuth::fromUser($user);
 

@@ -12,18 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('services', function (Blueprint $table) {
-                $table->id();
-                $table->foreignId('user_id')->constrained()->onDelete('cascade');
-                $table->foreignId('category_id')->constrained()->onDelete('cascade');
-                $table->string('service_name');
-                $table->text('service_details')->nullable();
-                $table->decimal('price', 10, 2);
-                $table->json('service_images')->nullable(); // For multiple images
-                $table->string('duration')->nullable();
-                $table->string('location')->nullable();
-                $table->double('latitude')->nullable();
-                $table->double('longitude')->nullable();
-                $table->timestamps();
+            $table->id()->primary();
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->decimal('price', 10, 2);
+            $table->json('image')->nullable();
+            $table->string('duration')->nullable();
+            $table->timestamps();
         });
     }
 

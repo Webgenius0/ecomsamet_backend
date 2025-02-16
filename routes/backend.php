@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\Web\Backen\FavoriteController;
 use App\Http\Controllers\Web\Backend\BookingController;
@@ -16,7 +15,6 @@ use App\Http\Controllers\Web\Backend\Settings\ProfileController;
 use App\Http\Controllers\Web\Backend\Settings\StripeSettingController;
 use App\Http\Controllers\Web\Backend\Settings\SystemSettingController;
 use App\Http\Controllers\Web\Backend\ServicesController;
-use App\Http\Controllers\Web\Backend\Usercontroller as BackendUsercontroller;
 use Illuminate\Support\Facades\Route;
 
 
@@ -26,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 //! Route for Reset Database and Optimize Clear
 
 //! Route for Dashboard
-Route::middleware(['auth:web'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 //! Route for Profile Settings
 Route::controller(ProfileController::class)->group(function () {
@@ -75,36 +73,29 @@ Route::controller(CategoryController::class)->group(function () {
 
 });
 
-// Route::controller(ServicesController::class)->group(function () {
-//     Route::get('/service', 'index')->name('service.index');
-//     Route::post('/service', 'store')->name('service.store');
-//     Route::get('/service/create', 'create')->name('service.create');
-//     Route::put('/service/update/{id}', 'update')->name('service.update');
-//     Route::get('/service/edit/{id}', 'edit')->name('service.edit');
-//     Route::delete('/service/destroy/{id}', 'destroy')->name('service.destroy');
-// });
+Route::controller(ServicesController::class)->group(function () {
+    Route::get('/service', 'index')->name('service.index');
+    Route::post('/service', 'store')->name('service.store');
+    Route::get('/service/create', 'create')->name('service.create');
+    Route::put('/service/update/{id}', 'update')->name('service.update');
+    Route::get('/service/edit/{id}', 'edit')->name('service.edit');
+    Route::delete('/service/destroy/{id}', 'destroy')->name('service.destroy');
+});
 
-// Route::controller(BookingController::class)->group(function () {
-//     Route::get('/booking', 'index')->name('booking.index');
-//     // Route::post('/service', 'store')->name('booking.store');
-//     // Route::get('/service/create', 'create')->name('booking.create');
-//     // Route::put('/service/update/{id}', 'update')->name('booking.update');
+Route::controller(BookingController::class)->group(function () {
+    Route::get('/booking', 'index')->name('booking.index');
+    // Route::post('/service', 'store')->name('booking.store');
+    // Route::get('/service/create', 'create')->name('booking.create');
+    // Route::put('/service/update/{id}', 'update')->name('booking.update');
 
-//     // Route::delete('/service/destroy/{id}', 'destroy')->name('booking.destroy');
-// });
+    // Route::delete('/service/destroy/{id}', 'destroy')->name('booking.destroy');
+});
 
-// Route::controller(BackendFavoriteController::class)->group(function () {
-//     Route::get('/favorite', 'index')->name('favorite.index');
-//     // Route::post('/service', 'store')->name('booking.store');
-//     // Route::get('/service/create', 'create')->name('booking.create');
-//     // Route::put('/service/update/{id}', 'update')->name('booking.update');
+Route::controller(BackendFavoriteController::class)->group(function () {
+    Route::get('/favorite', 'index')->name('favorite.index');
+    // Route::post('/service', 'store')->name('booking.store');
+    // Route::get('/service/create', 'create')->name('booking.create');
+    // Route::put('/service/update/{id}', 'update')->name('booking.update');
 
-//     Route::delete('/favorite/destroy/{id}', 'destroy')->name('favorite.destroy');
-// });
-// Route::get('user-profile', [UserController::class, 'index'])->name('user.index');
-// Route::delete('user-profile/{id}', [UserController::class, 'destroy'])->name('user.destroy');
-
-Route::middleware(['auth:web'])->group(function () {
-    Route::get('/allusers', [BackendUsercontroller::class, 'index'])->name('user.index');
-    Route::delete('/allusers/{id}', [BackendUsercontroller::class, 'destroy'])->name('user.destroy');
+    Route::delete('/favorite/destroy/{id}', 'destroy')->name('favorite.destroy');
 });

@@ -2,85 +2,66 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Models\PasswordReset;
-use Carbon\Carbon;
-use App\Models\User;
+use Carbon\Carbon;  // Import the Log facade
+use App\Models\ApiUser;
 
 class ForgetPasswordController extends Controller
 {
     public function requestReset(Request $request)
     {
-        try {
+        // Validate the email
+        $request->validate([
+            'email' => 'required|email|exists:api_users,email',
+        ]);
 
-            $request->validate([
-                'phone' => 'required|exists:users,phone',
-            ]);
+        $email = $request->input('email');
+        $user = ApiUser::where('email', $email)->first();
 
-            $phone = $request->input('phone');
+        // Generate a 6-digit OTP
+        $otp = rand(100000, 999999);
 
+        // Store OTP in the PasswordReset table
+        PasswordReset::updateOrCreate(
+            ['email' => $email],
+            ['otp' => $otp, 'created_at' => Carbon::now()]
+        );
 
-            $user = User::where('phone', $phone)->first();
-            if (!$user) {
-                return response()->json(['message' => 'User not found'], 404);
-            }
-            // dd($user);
+        // Send OTP email
+        Mail::to($email)->send(new \App\Mail\OtpMail($otp));
 
-            // Generate a 6-digit OTP
-            $otp = rand(1000, 9999);
-
-            // Store OTP in the PasswordReset table
-            PasswordReset::updateOrCreate(
-                ['phone' => $phone],
-                ['otp' => $otp, 'created_at' => Carbon::now()]
-            );
-
-// dd($user);
-
-            return ApiResponse::format(true, 200, 'OTP sent successfully', [
-                'otp'=>$otp,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        return response()->json(['message' => 'OTP sent to your email address.'], 200);
     }
 
 
     public function resetPassword(Request $request)
-{
-    // Validate the input
-    $request->validate([
-        'phone' => 'required|exists:users,phone',
-        'otp' => 'required|digits:4',
-        'password' => 'required|min:8',
-    ]);
-    // dd($request);
+    {
+        // Validate the input
+        $request->validate([
+            'email' => 'required|email',
+            'otp' => 'required|digits:4',
+            'password' => 'required|confirmed|min:8',
+        ]);
 
-    $reset = PasswordReset::where('phone', $request->phone)
-        ->where('otp', $request->otp)
-        ->first();
+        $reset = PasswordReset::where('email', $request->email)
+            ->where('otp', $request->otp)
+            ->first();
 
-// dd($reset);
+        if (!$reset || Carbon::parse($reset->created_at)->addMinutes(10)->isPast()) {
+            return response()->json(['message' => 'OTP is invalid or expired.'], 400);
+        }
 
-if (!$reset || Carbon::parse($reset->created_at)->addHours(2)->isPast()) {
-    return response()->json(['message' => 'OTP is invalid or expired.'], 400);
-}
-// dd($reset);
+        // Reset the password
+        $user = ApiUser::where('email', $request->email)->first();
+        $user->password = bcrypt($request->password);
+        $user->save();
 
+        // Delete the OTP record
+        $reset->delete();
 
-    $user = User::where('phone', $request->phone)->first();
-    if (!$user) {
-        return response()->json(['message' => 'User not found.'], 404);
+        return response()->json(['message' => 'Password has been reset successfully.'], 200);
     }
-
-    $user->password = bcrypt($request->password);
-    $user->save();
-
-    $reset->delete();
-
-    return response()->json(['message' => 'Password has been reset successfully.'], 200);
-}
 }

@@ -18,14 +18,7 @@ class Favorite extends Model
     public function service(){
         return $this->belongsTo(Services::class,'service_id');
     }
-    public function user(){
-        return $this->belongsTo(User::class, 'user_id');
+    public function apiuser(){
+        return $this->belongsTo(ApiUser::class, 'user_id');
     }
-
-    protected $hidden = [
-        'password',
-        'remember_token',
-        'created_at',
-        'updated_at',
-    ];
 }

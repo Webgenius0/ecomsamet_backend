@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Web\Backend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Categorie;
-use App\Models\Category;
 
 class CategoryController extends Controller
 {
   public function index()
   {
 
-    $categorys = Category::all();
+    $categorys = Categorie::all();
     return view('backend.layouts.category.index', compact('categorys'));
   }
 
@@ -28,7 +27,7 @@ class CategoryController extends Controller
       'description' => 'nullable',
     ]);
 
-    $categories = Category::create([
+    $categories = Categorie::create([
       'name' => $request->name,
       'description' => $request->description,
     ]);
@@ -38,7 +37,7 @@ class CategoryController extends Controller
 
 public function edit($id)
 {
-    $category = Category::findOrFail($id);
+    $category = Categorie::findOrFail($id);
     return view('backend.layouts.category.edit', compact('category'));
 }
 
@@ -49,7 +48,7 @@ public function update(Request $request, $id)
         'description' => 'nullable',
     ]);
 
-    $category = Category::findOrFail($id);
+    $category = Categorie::findOrFail($id);
     $category->name = $request->name;
     $category->description = $request->description;
     $category->save();

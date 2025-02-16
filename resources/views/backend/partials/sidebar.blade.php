@@ -49,7 +49,7 @@
                     </a>
                 </li>
 
-                {{-- <li class="slide">
+                <li class="slide">
                     <a class="side-menu__item" data-bs-toggle="slide" href="{{ route('service.index') }}">
                         <!-- Services Icon (Briefcase) -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
@@ -57,9 +57,9 @@
                         </svg>
                         <span class="side-menu__label">Services</span>
                     </a>
-                </li> --}}
+                </li>
 
-                {{-- <li class="slide">
+                <li class="slide">
                     <a class="side-menu__item" data-bs-toggle="slide" href="{{ route('booking.index') }}">
                         <!-- Bookings Icon (Calendar) -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
@@ -67,9 +67,9 @@
                         </svg>
                         <span class="side-menu__label">Bookings</span>
                     </a>
-                </li> --}}
+                </li>
 
-                {{-- <li class="slide">
+                <li class="slide">
                     <a class="side-menu__item" data-bs-toggle="slide" href="{{ route('favorite.index') }}">
                         <!-- Favorites Icon (Heart) -->
                         <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 24 24">
@@ -77,7 +77,7 @@
                         </svg>
                         <span class="side-menu__label">Favorites</span>
                     </a>
-                </li> --}}
+                </li>
 
 
                 <li class="slide">
@@ -91,7 +91,7 @@
 
                     <ul class="slide-menu">
                         <li><a href="{{ route('profile.setting') }}" class="slide-item">Profile Settings</a></li>
-                        <li><a href="{{ route('user.index') }}" class="slide-item">User List</a></li>
+                        {{-- <li><a href="{{ route('faq.index') }}" class="slide-item">FAQ</a></li> --}}
                         {{-- <li><a href="{{ route('mail.setting') }}" class="slide-item">Mail Settings</a></li>
                         <li><a href="{{ route('stripe.index') }}" class="slide-item">Stripe Settings</a></li> --}}
 
