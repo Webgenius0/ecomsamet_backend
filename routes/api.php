@@ -113,4 +113,4 @@ Route::middleware(['auth:api', 'role:user'])->group(function () {
     Route::get('/favorites/{service}/check', [ApiFavoriteServiceController::class, 'check']);
 });
 
-//For user Notification Controller
+//For user Notification Controller 
