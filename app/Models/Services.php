@@ -58,6 +58,7 @@ public function bookings()
         'remember_token',
         'created_at',
         'updated_at',
+        'duration',
     ];
 
     protected function casts(): array

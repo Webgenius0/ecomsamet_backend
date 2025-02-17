@@ -22,13 +22,11 @@ class HairDressServicesController extends Controller
     }
 
 
-    $services = Services::with(['ratings.user' => function ($query) {
+    $services = Services::with(['additionalServices','ratings.user' => function ($query) {
         $query->select('id', 'name', 'avatar');
     }])
         ->where('user_id', $user->id)
         ->get();
-
-// dd($services);
     return ApiResponse::format(true, 200, 'Services retrieved successfully', $services);
 }
 
@@ -37,14 +35,10 @@ public function store(Request $request)
     DB::beginTransaction();
 
     try {
-        // Get authenticated user
         $user = Auth::user();
-
         if (!$user) {
             return ApiResponse::format(false, 401, 'Unauthorized: Please log in');
         }
-
-        // Validation for the incoming request data
         $validator = Validator::make($request->all(), [
         'category_id' => 'required|integer',
         'service_name' => 'required|string|max:255',
@@ -64,14 +58,10 @@ public function store(Request $request)
         ]);
 
         // dd($request->all());
-
-        // If validation fails, return the errors
         if ($validator->fails()) {
             return ApiResponse::format(false, 400, 'Validation failed', $validator->errors());
         }
         // dd($request->all());
-
-        // Handle service images
         $serviceImagePaths = [];
         if ($request->hasFile('service_images')) {
             foreach ($request->file('service_images') as $image) {
@@ -95,24 +85,23 @@ public function store(Request $request)
 
         // dd($service);
 
-        // Create additional services
         $additionalServices = [];
         if ($request->has('additional_services')) {
             foreach ($request->additional_services as $key => $item) {
-                // Handle single additional service image
                 $additionalImagePath = null;
                 if (isset($item['image']) && $request->hasFile("additional_services.$key.image")) {
                     $path = $request->file("additional_services.$key.image")->store('public/additional_services');
                     $additionalImagePath = str_replace('public/', 'storage/', $path);
                 }
-                // Create the additional service
+                // dd($additionalImagePath);
                 $additionalServices[] = AdditionalService::create([
                     'service_id' => $service->id,
                     'name' => $item['name'],
                     'price' => $item['price'],
                     'details' => $item['details'],
-                    'images' => $additionalImagePath, // Store single image
+                    'images' => $additionalImagePath,
                 ]);
+                // dd($additionalServices);
             }
         }
 
@@ -126,7 +115,6 @@ public function store(Request $request)
 
     } catch (\Exception $e) {
         DB::rollBack();
-
         return ApiResponse::format(false, 500, 'Error creating service', [
             'error' => $e->getMessage(),
             'line' => $e->getLine(),
@@ -137,23 +125,17 @@ public function store(Request $request)
 
     public function show($id)
     {
-        // Get the authenticated user
         $user = Auth::user();
-
-        // Check if the user is authenticated
         if (!$user) {
             return ApiResponse::format(false, 401, 'Unauthorized: Please log in');
         }
-
         $service = Services::with(['user','additionalServices'])
             ->where('id', $id)
             ->where('user_id', $user->id)
             ->first();
-
         if (!$service) {
             return ApiResponse::format(false, 404, 'Service not found');
         }
-
         return ApiResponse::format(true, 200, 'Service retrieved successfully', $service);
     }
 
@@ -161,17 +143,12 @@ public function store(Request $request)
     public function additionalServices()
     {
         $user = Auth::user();
-
-        // Check if the user is authenticated
         if (!$user) {
             return ApiResponse::format(false, 401, 'Unauthorized: Please log in');
         }
-
-        // Fetch only additional services where service belongs to the logged-in user
         $additionalServices = AdditionalService::whereHas('service', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })->get();
-
         return ApiResponse::format(true, 200, 'Additional services retrieved successfully', $additionalServices);
     }
 }
