@@ -67,21 +67,57 @@ class UserHomeController extends Controller
         }
     }
 
-public function show($id)
-{
-    try {
-        $category = Category::with('services')->findOrFail($id);
+    public function show(Request $request, $id)
+    {
+        try {
+            $latitude = $request->query('latitude');
+            $longitude = $request->query('longitude');
+            $radius = $request->query('radius', 10);
 
-        if ($category->services->isEmpty()) {
-            return response()->json(['message' => 'No services found for this category'], 404);
+            $category = Category::with(['services' => function ($query) use ($latitude, $longitude, $radius) {
+                if ($latitude && $longitude) {
+                    $query->whereRaw("
+                        (6371 * acos(cos(radians(?)) * cos(radians(latitude)) *
+                        cos(radians(longitude) - radians(?)) + sin(radians(?)) *
+                        sin(radians(latitude)))) <= ?",
+                        [$latitude, $longitude, $latitude, $radius]
+                    );
+                }
+            }])->findOrFail($id);
+
+            if ($category->services->isEmpty()) {
+                return response()->json(['message' => 'No services found for this category within the given area.'], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'status' => 200,
+                'message' => 'Services under the category in the specified area',
+                'data' => $category->services
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Category not found.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Something went wrong.'], 500);
         }
-
-        return ApiResponse::format(true, 200, 'Services under the category', $category->services);
-
-    } catch (\Exception $e) {
-        return response()->json(['message' => 'Services not found.'], 500);
     }
-}
+
+
+    public function serviceShow($id) {
+
+        // dd($id);
+        try {
+            $service = Services::with('additionalServices')->findOrFail($id);
+            return ApiResponse::format(true, 200, 'Services under the category', $service);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['message' => 'Service not found.'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Something went wrong.'], 500);
+        }
+    }
+
+
 
 public function topRating(){
     $user = Auth::user();

@@ -11,7 +11,7 @@ class AdditionalService extends Model
     protected $fillable = [
         'service_id',
         'name',
-        'description',
+        'details',
         'price',
         'images',
     ];
