@@ -14,6 +14,9 @@ class Category extends Model
     {
         return $this->hasMany(Services::class, 'category_id');
     }
+    public function ratings(){
+        return $this->hasMany(Rating::class, 'category_id');
+    }
 
     protected $hidden = [
         'password',

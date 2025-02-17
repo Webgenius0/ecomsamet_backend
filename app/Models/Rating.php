@@ -20,7 +20,6 @@ class Rating extends Model
      return $this->belongsTo(Services::class,'service_id');
    }
 
-   
 
    protected $hidden = [
     'password',

@@ -83,8 +83,8 @@ public function bookService(Request $request)
             'service_id' => $service->id,
             'booking_date' => $request->booking_date,
             'booking_time' => $request->booking_time,
-            'total_price' => $totalPrice, // Initial total (without additional services)
-            'booking_tax' => 0, // Placeholder for tax
+            'total_price' => $totalPrice, // (without additional services)
+            'booking_tax' => 0,
             'status' => 'pending'
         ]);
 
@@ -118,14 +118,12 @@ public function bookService(Request $request)
         if ($hairdresser) {
             $hairdresser->notify(new BookingNotification());
         }
-
-
         DB::commit();
 
         return response()->json([
             'success' => true,
             'message' => 'Booking successful',
-            'booking' => $booking
+            'status' => 200,
         ]);
 
     } catch (Exception $e) {

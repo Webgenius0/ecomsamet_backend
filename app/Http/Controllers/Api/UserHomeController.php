@@ -82,7 +82,7 @@ class UserHomeController extends Controller
                         sin(radians(latitude)))) <= ?",
                         [$latitude, $longitude, $latitude, $radius]
                     );
-                }
+                }$query->with('ratings');
             }])->findOrFail($id);
 
             if ($category->services->isEmpty()) {
@@ -108,7 +108,7 @@ class UserHomeController extends Controller
 
         // dd($id);
         try {
-            $service = Services::with('additionalServices')->findOrFail($id);
+            $service = Services::with('additionalServices','ratings')->findOrFail($id);
             return ApiResponse::format(true, 200, 'Services under the category', $service);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['message' => 'Service not found.'], 404);
