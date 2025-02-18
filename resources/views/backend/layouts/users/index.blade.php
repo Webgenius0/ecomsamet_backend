@@ -35,17 +35,9 @@
                                 <td>{{ $user->phone ?? 'N/A' }}</td>
                                 <td>{{ $user->role ?? 'N/A' }}</td>
                                 <td>
-                                    @if(is_array($user->image))
-                                        <img src="{{ asset('storage/' . $user->image[0]) }}" alt="User Image" width="100">
-                                    @else
-                                        <img src="{{ asset('storage/' . $user->image) }}" alt="User Image" width="100">
-                                    @endif
+                                    <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/default-avatar.png') }}" alt="User Avatar" width="100">
                                 </td>
                                 <td>
-                                    <!-- Edit Button -->
-                                    {{-- <a href="{{ route('user.edit', $user->id) }}" class="btn btn-warning btn-sm">Edit</a> --}}
-
-                                    <!-- Delete Button -->
                                     <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $user->id }}">Delete</button>
 
                                     <!-- Hidden Delete Form -->
