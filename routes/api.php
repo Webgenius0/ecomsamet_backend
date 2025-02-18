@@ -54,10 +54,10 @@ Route::middleware(['auth:api'])->group(function () {
 
 //For Hairdress Home Controller
 Route::middleware(['auth:api', 'role:hairdresser'])->group(function () {
-    Route::get('/hairdressers/home', [HairHomeController::class, 'index']);
-    Route::post('/users', [HairHomeController::class,'store']);
-    Route::put('/users/{id}', [HairHomeController::class, 'update']);
-    Route::delete('/users/{id}', [HairHomeController::class, 'destroy']);
+    Route::get('/hairdressers/weekly-payment', [HairHomeController::class, 'weeklyPayment']);
+    Route::get(('/hairdressers/monthly-payment'), [HairHomeController::class, 'monthlyPayment']);
+    Route::get(('/hairdressers/yearly-payment'), [HairHomeController::class, 'yearlyPayment']);
+
 });
 //For Hairdresser Service Controller
 Route::middleware(['auth:api', 'role:hairdresser'])->group(function () {
@@ -113,4 +113,4 @@ Route::middleware(['auth:api', 'role:user'])->group(function () {
     Route::get('/favorites/{service}/check', [ApiFavoriteServiceController::class, 'check']);
 });
 
-//For user Notification Controller 
+//For user Notification Controller
