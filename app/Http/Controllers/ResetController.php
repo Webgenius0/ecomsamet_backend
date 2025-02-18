@@ -19,4 +19,8 @@ class ResetController extends Controller
         // return Helper::jsonResponse(true, 'System Reset Successfully.', 200);
         return "Okay";
     }
+    public function stroageLink(){
+        Artisan::call('storage:link');
+        return "Storage Link Created Successfully";
+    }
 }

@@ -75,36 +75,9 @@ Route::controller(CategoryController::class)->group(function () {
 
 });
 
-// Route::controller(ServicesController::class)->group(function () {
-//     Route::get('/service', 'index')->name('service.index');
-//     Route::post('/service', 'store')->name('service.store');
-//     Route::get('/service/create', 'create')->name('service.create');
-//     Route::put('/service/update/{id}', 'update')->name('service.update');
-//     Route::get('/service/edit/{id}', 'edit')->name('service.edit');
-//     Route::delete('/service/destroy/{id}', 'destroy')->name('service.destroy');
-// });
-
-// Route::controller(BookingController::class)->group(function () {
-//     Route::get('/booking', 'index')->name('booking.index');
-//     // Route::post('/service', 'store')->name('booking.store');
-//     // Route::get('/service/create', 'create')->name('booking.create');
-//     // Route::put('/service/update/{id}', 'update')->name('booking.update');
-
-//     // Route::delete('/service/destroy/{id}', 'destroy')->name('booking.destroy');
-// });
-
-// Route::controller(BackendFavoriteController::class)->group(function () {
-//     Route::get('/favorite', 'index')->name('favorite.index');
-//     // Route::post('/service', 'store')->name('booking.store');
-//     // Route::get('/service/create', 'create')->name('booking.create');
-//     // Route::put('/service/update/{id}', 'update')->name('booking.update');
-
-//     Route::delete('/favorite/destroy/{id}', 'destroy')->name('favorite.destroy');
-// });
-// Route::get('user-profile', [UserController::class, 'index'])->name('user.index');
-// Route::delete('user-profile/{id}', [UserController::class, 'destroy'])->name('user.destroy');
-
 Route::middleware(['auth:web'])->group(function () {
     Route::get('/allusers', [BackendUsercontroller::class, 'index'])->name('user.index');
     Route::delete('/allusers/{id}', [BackendUsercontroller::class, 'destroy'])->name('user.destroy');
 });
+
+//

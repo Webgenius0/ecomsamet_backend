@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/reset', [ResetController::class, 'RunMigrations'])->name('reset');
+Route::get('/stroagelink', [ResetController::class, 'stroagelink']);
 
 
 Route::get('/test-email', function () {
