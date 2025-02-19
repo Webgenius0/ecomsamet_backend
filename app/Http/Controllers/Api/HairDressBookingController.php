@@ -14,7 +14,7 @@ class HairDressBookingController extends Controller
     {
         $user = Auth::user();
 
-        $bookings = Booking::with(['service', 'service.user'])
+        $bookings = Booking::with(['service', 'service.user','user'])
         ->whereHas('service', function($query) use ($user) {
             $query->where('user_id', $user->id);
         })

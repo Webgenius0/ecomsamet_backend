@@ -79,6 +79,8 @@ Route::middleware(['auth:api', 'role:hairdresser'])->group(function () {
 //For Hairdresser Notification Controller
 Route::middleware(['auth:api', 'role:hairdresser'])->group(function () {
     Route::get('/notification', [HairDresserNotificationController::class, 'notification']);
+    Route::get('/notification/markall', [HairDresserNotificationController::class, 'markAllRead']);
+    Route::get('/notification/read/{id}', [HairDresserNotificationController::class, 'markSingleRead']);
 });
 
 //For User Controller
