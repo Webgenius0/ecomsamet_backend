@@ -87,7 +87,9 @@ Route::middleware(['auth:api', 'role:hairdresser'])->group(function () {
 
 //For user Home Controller
 Route::middleware(['auth:api', 'role:user'])->group(function () {
-    Route::get('/users/home/{id}/', [UserHomeController::class, 'show']);
+
+    Route::get('/users/home', [UserHomeController::class, 'index']);
+    Route::get('/users/home/{id}', [UserHomeController::class, 'show']);
     Route::get('/users/home/service/{id}', [UserHomeController::class, 'serviceShow']);
     Route::get('/service/search', [UserHomeController::class, 'search']);
     Route::get('top-rating', [UserHomeController::class, 'topRating']);

@@ -12,23 +12,36 @@ use Illuminate\Support\Facades\Auth;
 
 class UserHomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         try {
-        $user = Auth::user();
+            $latitude = $request->query('latitude');
+            $longitude = $request->query('longitude');
+            $radius = $request->query('radius', 10);
 
-        if(!$user) {
-            return ApiResponse::format(false, 401, 'Unauthorized: Please log in');
-        };
+            $categories = Category::whereHas('services', function ($query) use ($latitude, $longitude, $radius) {
+     if ($latitude && $longitude) {
+        $query->whereRaw("
+            (6371 * acos(cos(radians(?)) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(?)) + sin(radians(?)) *
+            sin(radians(latitude)))) <= ?",
+            [$latitude, $longitude, $latitude, $radius]
+        );
+    }
+        })->with(['services' => function ($query) use ($latitude, $longitude, $radius) {
+        if ($latitude && $longitude) {
+        $query->whereRaw("
+            (6371 * acos(cos(radians(?)) * cos(radians(latitude)) *
+            cos(radians(longitude) - radians(?)) + sin(radians(?)) *
+            sin(radians(latitude)))) <= ?",
+            [$latitude, $longitude, $latitude, $radius]
+        );
+        }
+            }])->get();
 
-
-
-        $services = Services::all();
-
-        return ApiResponse::format(true, 200, 'User registered successfully', $services);
-
+            return ApiResponse::format(true, 200, 'Services', $categories);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Services not found.'], 500);
+            return response()->json(['message' => 'Something went wrong. Please try again later.'], 500);
         }
     }
 
