@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\SocialLoginController;
 use App\Http\Controllers\Api\ApiCategorieController;
-use App\Http\Controllers\APi\ApiRatingController;
+use App\Http\Controllers\Api\ApiRatingController;
 use App\Http\Controllers\Api\ApiServiceController;
 use App\Http\Controllers\Api\ApiFavoriteServiceController;
 use App\Http\Controllers\Api\HairDressBookingController;
@@ -114,7 +114,7 @@ Route::middleware(['auth:api', 'role:user'])->group(function () {
 //For User Favorite
 Route::middleware(['auth:api', 'role:user'])->group(function () {
     Route::post('/favorites/{id}', [ApiFavoriteServiceController::class, 'toggle']);
-    Route::get('/favorites/{service}/check', [ApiFavoriteServiceController::class, 'check']);
+    Route::get('/favorites', [ApiFavoriteServiceController::class, 'index']);
 });
 
 //For user Notification Controller

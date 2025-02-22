@@ -95,8 +95,13 @@ class UserHomeController extends Controller
                         sin(radians(latitude)))) <= ?",
                         [$latitude, $longitude, $latitude, $radius]
                     );
-                }$query->with('ratings');
+                }
+                $query->with('ratings');
             }])->findOrFail($id);
+            $category->services->each(function ($service) {
+                $service->favorite_status = $service->favorite_status;
+                $service->makeHidden(['favoritedBy']); 
+            });
 
             if ($category->services->isEmpty()) {
                 return response()->json(['message' => 'No services found for this category within the given area.'], 404);
@@ -115,6 +120,8 @@ class UserHomeController extends Controller
             return response()->json(['message' => 'Something went wrong.'], 500);
         }
     }
+
+
 
 
     public function serviceShow($id) {
@@ -154,6 +161,8 @@ public function topRating(){
     }
 
 }
+
+
 }
 
 

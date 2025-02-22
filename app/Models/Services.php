@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Services extends Model
 {
@@ -40,9 +41,15 @@ class Services extends Model
     }
 
     public function favoritedBy()
-{
-    return $this->belongsToMany(user::class, 'favorites', 'service_id', 'user_id')->withTimestamps();
-}
+    {
+        return $this->hasMany(Favorite::class, 'service_id');
+    }
+    public function getFavoriteStatusAttribute()
+    {
+        $userId = Auth::id();
+        $isFavorited = $this->favoritedBy->contains('user_id', $userId);
+        return $isFavorited ? true : false;
+    }
 
     public function ratings()
     {

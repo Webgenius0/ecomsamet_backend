@@ -62,7 +62,12 @@ class ApiFavoriteServiceController extends Controller
         if ($favorite) {
             // Remove from favorites
             $favorite->delete();
-            return ApiResponse::format(true, 200, 'Removed from favorites');
+            //custom the response
+            return response()->json([
+                'code' => 201,
+               'message' => 'Removed from favorites',
+               'status' => false,
+            ], 200);
         } else {
             // Add to favorites
             Favorite::create([
@@ -70,7 +75,11 @@ class ApiFavoriteServiceController extends Controller
                 'service_id' => $service->id,
                 'status' => true
             ]);
-            return ApiResponse::format(true, 200, 'Added to favorites');
+            return response()->json([
+                'code' => 201,
+               'message' => 'Added to favorites',
+               'status' => true,
+            ], 200);
         }
     } catch (QueryException $qe) {
         return ApiResponse::format(false, 500, 'Database error: ' . $qe->getMessage());
