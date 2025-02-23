@@ -57,7 +57,6 @@ class UserBookingConfirmationNotification extends Notification
     {
         return [
 
-            dd($notifiable),
             'booking_id' => $this->booking->id,
             'message' => 'Your booking has been confirmed!',
 
