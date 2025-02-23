@@ -26,7 +26,10 @@ class ApiFavoriteServiceController extends Controller
             return ApiResponse::format(false, 401, 'User not authenticated', null);
         }
 
-        $favorites = $user->favoritedServices()->get();
+        $favorites = $user->favoritedServices()
+        ->with([ 'service',
+        'service.ratings',])
+        ->get();
 
         return ApiResponse::format(true, 200, 'Favorited services retrieved successfully', $favorites);
     } catch (\Exception $e) {

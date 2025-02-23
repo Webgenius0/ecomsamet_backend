@@ -8,26 +8,28 @@ use Illuminate\Container\Attributes\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 
+
 class HairDresserNotificationController extends Controller
-{    public function notification(){
+{
 
-    $natification = FacadesAuth::user()->notifications;
+    public function notification()
+    {
+        $notifications = FacadesAuth::user()->notifications;
 
-    $formatNotification = $natification->map(function ($notification) {
+        // Format the notifications
+        $formattedNotifications = $notifications->map(function ($notification) {
+            return [
+                'id' => $notification->id,
+                'title' => $notification->data['title'] ?? 'No Title',
+                'message' => $notification->data['message'] ?? 'No Message',
+                'read_at' => $notification->read_at,
+            ];
+        });
 
-        return [
-            'id' => $notification->id,
-            'title' => $notification->data['title'],
-            'message' => $notification->data['message'],
-            'read_at' => $notification->read_at
-        ];
-    });
+        // Return the response using your custom ApiResponse formatter
+        return ApiResponse::format(true, 200, 'The following notifications', $formattedNotifications);
+    }
 
-    return ApiResponse::format(true,200,'The following notifications',[
-
-        $formatNotification]);
-
-}
 
 public function markAllRead(){
  $user = FacadesAuth::user();

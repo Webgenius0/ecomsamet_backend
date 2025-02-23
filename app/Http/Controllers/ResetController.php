@@ -23,4 +23,5 @@ class ResetController extends Controller
         Artisan::call('storage:link');
         return "Storage Link Created Successfully";
     }
+
 }

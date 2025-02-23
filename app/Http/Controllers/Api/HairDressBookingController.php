@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
+use App\Models\User;
+use App\Notifications\UserBookingConfirmationNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +16,7 @@ class HairDressBookingController extends Controller
     {
         $user = Auth::user();
 
-        $bookings = Booking::with(['service', 'service.user','user'])
+        $bookings = Booking::with(['service', 'service.user','user', 'additionalServices','additionalServices.additionalService' ])
         ->whereHas('service', function($query) use ($user) {
             $query->where('user_id', $user->id);
         })
@@ -25,23 +27,17 @@ class HairDressBookingController extends Controller
 
     public function acceptbooking($id, $action)
     {
-        // dd($action);
 
         $booking = Booking::find($id);
 
         if (!$booking) {
             return response()->json(['message' => 'Booking not found'], 404);
         }
-
-        $user = Auth::user();
-        if ($booking->service->user_id != $user->id) {
-            return response()->json(['message' => 'You do not have permission to modify this booking'], 403);
-        }
-// dd($booking);
-
         if ($action === 'confirm') {
             $booking->status = 'confirmed';
             $booking->save();
+            $user = User::findOrFail($booking->user_id);
+            $user->notify(new UserBookingConfirmationNotification($booking));
             return response()->json(['message' => 'Booking accepted successfully']);
         } elseif ($action === 'cancel') {
             $booking->status = 'cancelled';

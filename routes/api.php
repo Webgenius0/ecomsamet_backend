@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\ApiCategorieController;
 use App\Http\Controllers\Api\ApiRatingController;
 use App\Http\Controllers\Api\ApiServiceController;
 use App\Http\Controllers\Api\ApiFavoriteServiceController;
+use App\Http\Controllers\Api\ApiUserNotificationController;
 use App\Http\Controllers\Api\HairDressBookingController;
 use App\Http\Controllers\Api\HairDresserNotificationController;
 use App\Http\Controllers\Api\HairDressServicesController;
@@ -118,3 +119,8 @@ Route::middleware(['auth:api', 'role:user'])->group(function () {
 });
 
 //For user Notification Controller
+Route::middleware(['auth:api', 'role:user'])->group(function () {
+    Route::get('/user-notification', [ApiUserNotificationController::class, 'notification']);
+    Route::put('/user-notification/{id}', [ApiUserNotificationController::class, 'markRead']);
+    Route::put('/user-service/completed/{id}', [ApiUserNotificationController::class, 'markascompleted']);
+});

@@ -33,6 +33,7 @@ Route::get('/reset', [ResetController::class, 'RunMigrations'])->name('reset');
 Route::get('/stroagelink', [ResetController::class, 'stroagelink']);
 
 
+
 Route::get('/test-email', function () {
     Mail::raw('This is a test email sent via Mailtrap!', function ($message) {
         $message->to('test@domain.com')
